@@ -1,7 +1,11 @@
+### Elasticsearch ###
+/esdata/
+/data/
+
+### Gradle ###
 .gradle
 /build/
 /out/
-/data/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###

@@ -10,8 +10,13 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+    volumes:
+      - ./esdata:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
+      - cluster.name=jgBay-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.1.3
