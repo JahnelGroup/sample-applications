@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.2.10'
+		kotlinVersion = '1.2.21'
 		springBootVersion = '1.5.10.RELEASE'
 	}
 	repositories {
@@ -45,7 +45,8 @@ dependencies {
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	compile('com.fasterxml.jackson.module:jackson-module-parameter-names')
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
+	compile('net.java.dev.jna:jna:4.5.1')
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 	compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 	runtime('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')

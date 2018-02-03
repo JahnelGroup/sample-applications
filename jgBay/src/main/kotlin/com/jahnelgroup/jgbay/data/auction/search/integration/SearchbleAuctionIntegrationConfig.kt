@@ -1,7 +1,9 @@
 package com.jahnelgroup.jgbay.data.auction.search.integration
 
 import com.jahnelgroup.jgbay.data.auction.Auction
-import com.jahnelgroup.jgbay.data.user.UserRepo
+import com.jahnelgroup.jgbay.data.auction.search.SearchableAuction
+import com.jahnelgroup.jgbay.data.auction.search.SearchableAuctionRepo
+import org.springframework.beans.BeanUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +17,7 @@ import org.springframework.integration.endpoint.MessageProducerSupport
 open class SearchbleAuctionIntegrationConfig {
 
     @Autowired
-    lateinit var userRepo: UserRepo
+    lateinit var searchableAuctionRepo: SearchableAuctionRepo
 
     @Autowired
     lateinit var createAndSaveEvents: MessageProducerSupport
@@ -27,10 +29,9 @@ open class SearchbleAuctionIntegrationConfig {
                 .log()
                 .handle { payload: AfterCreateEvent, _ ->
                     var auction = payload.source
-                    println("Auction $auction")
-//                    val elasticPerson = ElasticPerson()
-//                    BeanUtils.copyProperties(payload.source as Person, elasticPerson)
-//                    println(personSearchRepo.save(elasticPerson))
+                    val searchableAuction = SearchableAuction()
+                    BeanUtils.copyProperties(payload.source as Auction, searchableAuction)
+                    println(searchableAuctionRepo.save(searchableAuction))
                 }
                 .get()
 
