@@ -33,12 +33,11 @@ class SearchableAuctionController(
 //    }
 
     @GetMapping(value = FIND_BY_QUERY_LINK)
-    fun findByQuery() : ResponseEntity<Any> {
-        println("Query")
-        return ResponseEntity.ok(Resources<Resource<SearchableAuction>>(searchableAuctionRepo.findAll().map {
+    fun findByQuery() : ResponseEntity<Any> =
+        ResponseEntity.ok(Resources<Resource<SearchableAuction>>(searchableAuctionRepo.findAll().map {
             Resource<SearchableAuction>(it)
         }))
-    }
+
 
 
 }
