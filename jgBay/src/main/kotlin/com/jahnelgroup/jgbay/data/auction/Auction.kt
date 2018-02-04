@@ -22,7 +22,7 @@ data class Auction (
     @OneToMany(mappedBy = "auction", cascade = arrayOf(CascadeType.ALL), orphanRemoval = true)
     var bids: MutableSet<Bid> = mutableSetOf()
 
-    @ManyToOne(cascade = arrayOf(CascadeType.ALL))
+    @ManyToOne
     @JoinColumn(name = "createdBy", insertable = false, updatable = false)
     var seller : User? = null
 
