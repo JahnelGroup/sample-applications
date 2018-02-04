@@ -7,7 +7,7 @@ import org.springframework.integration.transformer.GenericTransformer
 class AuctionTransformers {
 
     companion object {
-        fun toSearchableAuction() = GenericTransformer<Auction, SearchableAuction> {
+        fun fromAuction() = GenericTransformer<Auction, SearchableAuction> {
             SearchableAuction().apply {
                 this.id = it.id!!
                 this.title = it.title

@@ -5,23 +5,17 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.rest.core.event.AfterCreateEvent
 import org.springframework.data.rest.core.event.AfterDeleteEvent
 import org.springframework.data.rest.core.event.AfterSaveEvent
+import org.springframework.data.rest.core.event.RepositoryEvent
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 
 @Configuration
-open class RestEventsIntegrationConfig {
+class RestEventsIntegrationConfig {
 
     @Bean
-    open fun createAndSaveEvents(): ApplicationEventListeningMessageProducer {
+    fun repositoryEvents(): ApplicationEventListeningMessageProducer {
         val producer = ApplicationEventListeningMessageProducer()
-        producer.setEventTypes(AfterCreateEvent::class.java, AfterSaveEvent::class.java)
+        producer.setEventTypes(RepositoryEvent::class.java)
         return producer
     }
-
-//    @Bean
-//    open fun deleteEvents(): ApplicationEventListeningMessageProducer {
-//        val producer = ApplicationEventListeningMessageProducer()
-//        producer.setEventTypes(AfterDeleteEvent::class.java)
-//        return producer
-//    }
 
 }
