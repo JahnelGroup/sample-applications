@@ -9,3 +9,4 @@ class App
 fun main(args: Array<String>) {
     SpringApplication.run(App::class.java, *args)
 }
+

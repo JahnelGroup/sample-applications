@@ -5,6 +5,8 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		// Needed for latest elasticsearch
+		maven { url 'https://repo.spring.io/libs-release' }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -37,7 +39,14 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-devtools')
+
 	compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
+
+	// Look up here for compatibility chart: https://github.com/spring-projects/spring-data-elasticsearch
+//	compile('org.springframework.data:spring-data-elasticsearch:3.0.3.RELEASE') // ES 5.5.x
+//	compile('org.elasticsearch:elasticsearch:5.5.3') // must match the version of ES
+//	compile('org.elasticsearch.client:transport:5.5.3') // must match the version of ES
+
 	compile('org.springframework.integration:spring-integration-event')
 	compile('org.springframework.integration:spring-integration-http')
 	compile('org.springframework.boot:spring-boot-starter-integration')
@@ -52,3 +61,7 @@ dependencies {
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 }
+
+
+
+

@@ -11,7 +11,6 @@ import org.springframework.hateoas.ResourceProcessor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import javax.persistence.EntityManager
 
 const val SUBMIT_BID_LINK : String = "submitBid"
 const val CANCEL_BID_LINK : String = "cancelBid"
@@ -27,8 +26,7 @@ class SubmitBidController(
         private val userContextService: UserContextService,
         private val entityLinks: RepositoryEntityLinks,
         private val auctionRepo: AuctionRepo,
-        private val bidRepo: BidRepo,
-        private var entityManager: EntityManager
+        private val bidRepo: BidRepo
 ) {
 
     @Bean

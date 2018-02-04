@@ -33,26 +33,4 @@ class UserLinksConfig (
         res
     }
 
-    /**
-     * Add a link to be displayed when listing a single User
-     *
-     *  Example: /api/users/1
-     */
-    @Bean
-    fun userSingleLinks() = ResourceProcessor<Resource<User>> { res ->
-        res.add(Link("https://www.google.com/search?q="+userContextService.getCurrentUsername()).withRel("google"))
-        res
-    }
-
-    /**
-     * Add a link to the very top level API.
-     *
-     *  Example: /api
-     */
-    @Bean
-    fun apiLink() = ResourceProcessor<RepositoryLinksResource> { res ->
-        res.add(Link("http://top-level-link").withRel("example"))
-        res
-    }
-
 }
