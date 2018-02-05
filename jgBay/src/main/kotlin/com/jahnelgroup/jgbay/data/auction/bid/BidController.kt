@@ -49,6 +49,8 @@ class SubmitBidController(
 
     /**
      * Submit a Bid
+     *
+     * TODO: This doesn't trigger the upsertFlow Integration flow for an Auction...
      */
     @PostMapping(value = SUBMIT_BID_LINK)
     fun submitBid(@PathVariable("id") auction: Auction?, @RequestBody bid: Bid) : Bid {
