@@ -1,7 +1,7 @@
 package com.jahnelgroup.jgbay.data.auction.bid
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.jahnelgroup.jgbay.common.data.AbstractEntity
+import com.jahnelgroup.jgbay.data.AbstractEntity
 import com.jahnelgroup.jgbay.data.auction.Auction
 import com.jahnelgroup.jgbay.data.user.User
 import org.springframework.data.jpa.domain.support.AuditingEntityListener

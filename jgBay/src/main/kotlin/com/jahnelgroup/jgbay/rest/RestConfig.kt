@@ -4,7 +4,6 @@ import com.jahnelgroup.jgbay.data.auction.Auction
 import com.jahnelgroup.jgbay.data.auction.bid.Bid
 import com.jahnelgroup.jgbay.data.user.User
 import com.jahnelgroup.jgbay.search.auction.SearchableAuction
-import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurerAdapter

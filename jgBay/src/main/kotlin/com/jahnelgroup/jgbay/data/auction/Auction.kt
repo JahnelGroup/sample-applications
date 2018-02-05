@@ -1,6 +1,6 @@
 package com.jahnelgroup.jgbay.data.auction
 
-import com.jahnelgroup.jgbay.common.data.AbstractEntity
+import com.jahnelgroup.jgbay.data.AbstractEntity
 import com.jahnelgroup.jgbay.data.auction.bid.Bid
 import com.jahnelgroup.jgbay.data.user.User
 import org.springframework.data.jpa.domain.support.AuditingEntityListener

@@ -1,6 +1,6 @@
 package com.jahnelgroup.jgbay.data.auction.bid
 
-import com.jahnelgroup.jgbay.common.context.UserContextService
+import com.jahnelgroup.jgbay.context.UserContextService
 import com.jahnelgroup.jgbay.data.auction.Auction
 import com.jahnelgroup.jgbay.data.auction.AuctionRepo
 import org.springframework.context.annotation.Bean

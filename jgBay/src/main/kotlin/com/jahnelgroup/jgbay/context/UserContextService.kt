@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.common.context
+package com.jahnelgroup.jgbay.context
 
 import com.jahnelgroup.jgbay.data.user.User
 

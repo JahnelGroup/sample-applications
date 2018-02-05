@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.common.integration
+package com.jahnelgroup.jgbay.integration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,7 +1,7 @@
 package com.jahnelgroup.jgbay.auditing
 
-import com.jahnelgroup.jgbay.common.context.UserContextService
-import com.jahnelgroup.jgbay.common.time.DateTimeService
+import com.jahnelgroup.jgbay.context.UserContextService
+import com.jahnelgroup.jgbay.context.DateTimeService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.auditing.DateTimeProvider

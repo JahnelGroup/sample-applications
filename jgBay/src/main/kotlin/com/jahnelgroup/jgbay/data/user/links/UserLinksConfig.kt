@@ -1,12 +1,10 @@
 package com.jahnelgroup.jgbay.data.user.links
 
-import com.jahnelgroup.jgbay.common.context.UserContextService
+import com.jahnelgroup.jgbay.context.UserContextService
 import com.jahnelgroup.jgbay.data.user.User
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.rest.webmvc.RepositoryLinksResource
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks
-import org.springframework.hateoas.Link
 import org.springframework.hateoas.Resource
 import org.springframework.hateoas.ResourceProcessor
 import org.springframework.hateoas.Resources

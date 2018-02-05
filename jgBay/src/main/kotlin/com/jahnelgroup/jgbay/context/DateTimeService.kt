@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.common.time
+package com.jahnelgroup.jgbay.context
 
 import java.time.ZonedDateTime
 

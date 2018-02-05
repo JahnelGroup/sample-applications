@@ -1,6 +1,6 @@
 package com.jahnelgroup.jgbay.data.auction
 
-import com.jahnelgroup.jgbay.common.context.UserContextService
+import com.jahnelgroup.jgbay.context.UserContextService
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler
 import org.springframework.stereotype.Component

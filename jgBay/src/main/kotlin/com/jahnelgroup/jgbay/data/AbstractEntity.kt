@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.common.data
+package com.jahnelgroup.jgbay.data
 
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate

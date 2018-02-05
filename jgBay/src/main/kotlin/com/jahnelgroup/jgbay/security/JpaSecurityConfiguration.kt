@@ -1,6 +1,6 @@
 package com.jahnelgroup.jgbay.security
 
-import com.jahnelgroup.jgbay.common.context.UserContextService
+import com.jahnelgroup.jgbay.context.UserContextService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.repository.query.spi.EvaluationContextExtensionSupport
