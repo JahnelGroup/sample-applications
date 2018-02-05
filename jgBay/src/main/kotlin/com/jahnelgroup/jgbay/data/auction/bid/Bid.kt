@@ -14,7 +14,7 @@ data class Bid (
     var amount : BigDecimal = BigDecimal("100.00")
 ) : AbstractEntity(){
 
-    @ManyToOne(cascade = arrayOf(CascadeType.ALL))
+    @ManyToOne
     @JoinColumn(name = "createdBy", insertable = false, updatable = false)
     var user : User? = null
 

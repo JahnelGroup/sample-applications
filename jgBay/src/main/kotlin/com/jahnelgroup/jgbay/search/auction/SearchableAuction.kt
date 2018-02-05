@@ -10,5 +10,6 @@ data class SearchableAuction(
     var status: String = "",
     var title: String = "",
     var seller: Long = 0,
-    var numberOfBids: Int = 0
+    var numberOfBids: Int = 0,
+    var categories: Set<String> = emptySet()
 )

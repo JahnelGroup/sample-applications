@@ -34,6 +34,7 @@ class SearchbleAuctionIntegrationConfig {
                 .log()
                 .transform(RepositoryEvent::getSource)
                 .transform(AuctionTransformers.fromAuction())
+                // TODO: Can we do this with a JpaOutbound adapter?
                 .handle { payload: SearchableAuction, _ ->
                     // TODO: Without the println it's throwing
                     // org.springframework.messaging.core.DestinationResolutionException: no output-channel or replyChannel header available
@@ -41,7 +42,6 @@ class SearchbleAuctionIntegrationConfig {
                 }.get()
     }
 
-    // TODO: If I uncomment this then neither flow works.
     @Bean
     fun deleteAuctionESFlow(): IntegrationFlow {
         return IntegrationFlows.from("repositoryEventsPubSubChannel")

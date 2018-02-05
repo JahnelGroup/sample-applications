@@ -14,6 +14,7 @@ class AuctionTransformers {
                 this.status = it.status.name
                 this.seller = it.createdBy
                 this.numberOfBids = it.bids.size
+                this.categories = it.categories.map { it.name }.toSet()
             }
         }
     }
