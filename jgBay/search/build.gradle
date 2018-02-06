@@ -8,6 +8,10 @@ springBoot {
     executable = true
 }
 
+configurations {
+    all*.exclude module: 'spring-boot-starter-security'
+    all*.exclude module: 'spring-security-test'
+}
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
