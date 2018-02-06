@@ -12,6 +12,7 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+		classpath("io.spring.gradle:dependency-management-plugin")
 	}
 }
 
@@ -24,9 +25,8 @@ subprojects {
 	apply plugin: 'kotlin-spring'
 	apply plugin: 'eclipse'
 	apply plugin: 'org.springframework.boot'
+	apply plugin: "io.spring.dependency-management"
 
-
-	sourceCompatibility = 1.8
 	compileKotlin {
 		kotlinOptions.jvmTarget = "1.8"
 	}
@@ -54,7 +54,10 @@ subprojects {
 		compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
 		compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 		compile('com.fasterxml.jackson.module:jackson-module-parameter-names')
+
+		// Why is this here?
 		compile('net.java.dev.jna:jna:4.5.1')
+
 		compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 		compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 		runtime('com.h2database:h2')
@@ -62,5 +65,3 @@ subprojects {
 		testCompile('org.springframework.security:spring-security-test')
 	}
 }
-
-

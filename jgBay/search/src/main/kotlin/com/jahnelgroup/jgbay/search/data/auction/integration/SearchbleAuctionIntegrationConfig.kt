@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class SearchbleAuctionIntegrationConfig {
 
-
 //    @Bean
 //    fun upsertAuctionESFlow(): IntegrationFlow {
 //        return IntegrationFlows.from("repositoryEventsPubSubChannel")

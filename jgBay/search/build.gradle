@@ -1,7 +1,7 @@
 description = 'Search Service'
 
 dependencies {
-    compile(project(":search"))
+
 }
 
 springBoot {

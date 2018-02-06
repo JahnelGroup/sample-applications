@@ -1,19 +1,15 @@
 package com.jahnelgroup.jgbay.search
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.jahnelgroup.jgbay.search.App
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import java.io.UnsupportedEncodingException
 import org.springframework.test.web.servlet.MvcResult
-
-
+import java.io.UnsupportedEncodingException
 
 @SpringBootTest(classes = arrayOf(App::class))
 @RunWith(SpringRunner::class)
@@ -26,10 +22,6 @@ abstract class AbstractTest {
 
     @Autowired
     lateinit var objectMapper: ObjectMapper
-
-    var STEVEN_CREDENTIALS = httpBasic("steven", "password")
-    var CARRIE_CREDENTIALS = httpBasic("carrie", "password")
-    var LAUREN_CREDENTIALS = httpBasic("lauren", "password")
 
     @Throws(UnsupportedEncodingException::class)
     fun contentBody(result: MvcResult): String {
