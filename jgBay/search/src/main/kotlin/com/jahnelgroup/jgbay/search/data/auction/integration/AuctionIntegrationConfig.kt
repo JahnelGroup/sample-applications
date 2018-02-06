@@ -3,7 +3,7 @@ package com.jahnelgroup.jgbay.search.data.auction.integration
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class SearchbleAuctionIntegrationConfig {
+class AuctionIntegrationConfig {
 
 //    @Bean
 //    fun upsertAuctionESFlow(): IntegrationFlow {

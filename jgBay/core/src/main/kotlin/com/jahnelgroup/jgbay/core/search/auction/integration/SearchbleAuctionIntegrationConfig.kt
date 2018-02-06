@@ -13,7 +13,6 @@ import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.http.Http
 import org.springframework.integration.dsl.support.Transformers
-import java.util.*
 
 @Configuration
 class SearchbleAuctionIntegrationConfig {
@@ -46,9 +45,10 @@ class SearchbleAuctionIntegrationConfig {
                 .log()
                 .transform(RepositoryEvent::getSource)
                 .transform(AuctionTransformers.fromAuction())
+                .enrichHeaders({it.headerExpression("payloadId", "payload.id")})
                 .transform(Transformers.toJson())
                 .handle(Http.outboundChannelAdapter("${SEARCH_SERVICE_URI}/auctions/{id}").httpMethod(HttpMethod.PATCH)
-                        .uriVariable("id", "payload.id"))
+                        .uriVariable("id", "headers.payloadId"))
                 .get()
     }
 
@@ -62,9 +62,10 @@ class SearchbleAuctionIntegrationConfig {
                 .log()
                 .transform(RepositoryEvent::getSource)
                 .transform(AuctionTransformers.fromAuction())
+                .enrichHeaders({it.headerExpression("payloadId", "payload.id")})
                 .transform(Transformers.toJson())
                 .handle(Http.outboundChannelAdapter("${SEARCH_SERVICE_URI}/auctions/{id}").httpMethod(HttpMethod.DELETE)
-                        .uriVariable("id", "payload.id"))
+                        .uriVariable("id", "headers.payloadId"))
                 .get()
     }
 
