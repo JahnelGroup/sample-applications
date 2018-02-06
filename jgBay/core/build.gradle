@@ -1,0 +1,9 @@
+description = 'Core Service'
+
+dependencies {
+    compile(project(":core"))
+}
+
+springBoot {
+    executable = true
+}

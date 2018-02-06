@@ -1,0 +1,34 @@
+description = 'Search Service'
+
+dependencies {
+    compile(project(":search"))
+}
+
+springBoot {
+    executable = true
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
+
+	// Look up here for compatibility chart: https://github.com/spring-projects/spring-data-elasticsearch
+//	compile('org.springframework.data:spring-data-elasticsearch:3.0.3.RELEASE') // ES 5.5.x
+//	compile('org.elasticsearch:elasticsearch:5.5.3') // must match the version of ES
+//	compile('org.elasticsearch.client:transport:5.5.3') // must match the version of ES
+}
+
+
+
+
+
+
+
+	// dependencyManagement {
+	// 	dependencies {
+	// 		// org.springframework.data:spring-data-elasticsearch:3.0.3.RELEASE
+	// 		// requires this specific version, by doing this we prevent the downgrade
+	// 		// to 1.13.10.RELEASE which causes ClassNotFound exceptions.
+	// 		dependency 'org.springframework.data:spring-data-commons:2.0.3.RELEASE'
+	// 	}
+	// }		
