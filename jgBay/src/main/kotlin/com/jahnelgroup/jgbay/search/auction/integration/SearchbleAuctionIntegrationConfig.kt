@@ -1,6 +1,7 @@
 package com.jahnelgroup.jgbay.search.auction.integration
 
 import com.jahnelgroup.jgbay.data.auction.Auction
+import com.jahnelgroup.jgbay.integration.elasticsearch.Elasticsearch
 import com.jahnelgroup.jgbay.search.auction.SearchableAuction
 import com.jahnelgroup.jgbay.search.auction.SearchableAuctionRepo
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +14,7 @@ import org.springframework.data.rest.core.event.RepositoryEvent
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.endpoint.MessageProducerSupport
+import org.springframework.integration.jpa.support.PersistMode
 import org.springframework.messaging.MessageChannel
 
 @Configuration
@@ -34,12 +36,8 @@ class SearchbleAuctionIntegrationConfig {
                 .log()
                 .transform(RepositoryEvent::getSource)
                 .transform(AuctionTransformers.fromAuction())
-                // TODO: Can we do this with a JpaOutbound adapter?
-                .handle { payload: SearchableAuction, _ ->
-                    // TODO: Without the println it's throwing
-                    // org.springframework.messaging.core.DestinationResolutionException: no output-channel or replyChannel header available
-                    println(searchableAuctionRepo.save(payload))
-                }.get()
+                .handle(Elasticsearch.outboundAdapter(SearchableAuction::class.java, searchableAuctionRepo))
+                .get()
     }
 
     @Bean
@@ -49,11 +47,11 @@ class SearchbleAuctionIntegrationConfig {
                 .log()
                 .transform(RepositoryEvent::getSource)
                 .transform(AuctionTransformers.fromAuction())
-                .handle { payload: SearchableAuction, _ ->
-                    // TODO: Without the println it's throwing
-                    // org.springframework.messaging.core.DestinationResolutionException: no output-channel or replyChannel header available
-                    println(searchableAuctionRepo.delete(payload))
-                }.get()
+                .handle(Elasticsearch.outboundAdapter(SearchableAuction::class.java, searchableAuctionRepo)
+                        .persistMode(Elasticsearch.Companion.PersistMode.DELETE))
+                .get()
+
+        PersistMode.DELETE
     }
 
 
