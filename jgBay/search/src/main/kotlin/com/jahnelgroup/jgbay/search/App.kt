@@ -1,12 +1,12 @@
 package com.jahnelgroup.jgbay.search
 
-import org.springframework.boot.SpringApplication
+import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
 class App
 
 fun main(args: Array<String>) {
-    SpringApplication.run(App::class.java, *args)
+    runApplication<App>(*args)
 }
-

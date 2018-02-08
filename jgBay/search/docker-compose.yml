@@ -16,6 +16,7 @@ services:
       - discovery.type=single-node
       - cluster.name=jgBay-cluster
       - bootstrap.memory_lock=true
+      - "xpack.security.enabled=false"
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
   kibana:
@@ -26,6 +27,7 @@ services:
       - "5601:5601"
     environment:
       ELASTICSEARCH_URL: http://localhost:9200
+
 
 # Must be mounted like this or else permission aren't correct
 volumes:
