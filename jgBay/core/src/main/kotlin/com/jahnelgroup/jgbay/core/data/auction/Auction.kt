@@ -4,11 +4,13 @@ import com.jahnelgroup.jgbay.core.data.AbstractEntity
 import com.jahnelgroup.jgbay.core.data.auction.bid.Bid
 import com.jahnelgroup.jgbay.core.data.auction.category.Category
 import com.jahnelgroup.jgbay.core.data.user.User
+import com.jahnelgroup.jgbay.core.search.Searchable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
 @Entity
 @EntityListeners(value = AuditingEntityListener::class)
+@Searchable("auctions", transformRef = "auctionSearchTransformer")
 data class Auction (
 
         @field:Embedded
