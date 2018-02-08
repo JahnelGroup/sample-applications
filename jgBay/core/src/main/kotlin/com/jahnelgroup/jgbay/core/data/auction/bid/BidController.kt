@@ -62,16 +62,13 @@ class SubmitBidController(
             throw UnableToBidException()
         }
 
-
-
         var existingBid = bidRepo.findMyBidByAuctionId(auction!!.id!!)
-        if( existingBid != null ){
-            // have to map values by hand...
-            existingBid.amount = bid.amount
-            return bidRepo.save(existingBid)
+        return if( existingBid != null ){
+            auction.updateBid(existingBid, bid)
+            bidRepo.save(existingBid)
         }else {
-            bid.auction = auction
-            return bidRepo.save(bid)
+            auction.addBid(bid)
+            bidRepo.save(bid)
         }
     }
 
