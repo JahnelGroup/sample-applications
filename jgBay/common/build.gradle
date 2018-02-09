@@ -1,0 +1,10 @@
+description = 'Common starter used in SpringBoot services'
+
+springBoot {
+    executable = false
+    excludeDevtools = true
+}
+
+bootRepackage {
+    enabled = false
+}
