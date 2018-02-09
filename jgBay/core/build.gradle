@@ -1,7 +1,7 @@
 description = 'Core Service'
 
 dependencies {
-
+    compile(project(':common'))
 }
 
 springBoot {
