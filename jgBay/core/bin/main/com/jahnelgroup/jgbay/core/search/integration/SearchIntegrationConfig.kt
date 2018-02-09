@@ -2,7 +2,6 @@ package com.jahnelgroup.jgbay.core.search.auction.integration
 
 import com.jahnelgroup.jgbay.core.search.Searchable
 import com.jahnelgroup.jgbay.core.search.SearchableTransformers
-import com.jahnelgroup.jgbay.core.search.integration.SearchUpdateEvent
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEvent
@@ -19,7 +18,6 @@ import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.dsl.http.Http
 import org.springframework.integration.dsl.support.GenericHandler
 import org.springframework.integration.dsl.support.Transformers
-import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 import org.springframework.messaging.MessageChannel
 
 @Configuration
@@ -33,18 +31,6 @@ class SearchbleIntegrationConfig {
     @Bean fun searchCreateChannel(): MessageChannel = MessageChannels.direct("searchCreateChannel").get()
     @Bean fun searchUpdateChannel(): MessageChannel = MessageChannels.direct("searchUpdateChannel").get()
     @Bean fun searchDeleteChannel(): MessageChannel = MessageChannels.direct("searchDeleteChannel").get()
-
-    /**
-     * Listen for SearchUpdateEvents and publish them on the searchUpdateChannel to update
-     * the source Entity associated with the event.
-     */
-    @Bean
-    fun domainEvents(): ApplicationEventListeningMessageProducer {
-        val producer = ApplicationEventListeningMessageProducer()
-        producer.setEventTypes(SearchUpdateEvent::class.java)
-        producer.setOutputChannelName("searchUpdateChannel")
-        return producer
-    }
 
     fun searchableEvent(event: ApplicationEvent): Boolean =
         event.source.javaClass.isAnnotationPresent(Searchable::class.java)

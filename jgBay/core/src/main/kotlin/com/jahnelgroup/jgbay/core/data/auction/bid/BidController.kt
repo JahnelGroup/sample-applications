@@ -65,10 +65,13 @@ class SubmitBidController(
         var existingBid = bidRepo.findMyBidByAuctionId(auction!!.id!!)
         return if( existingBid != null ){
             auction.updateBid(existingBid, bid)
-            bidRepo.save(existingBid)
+            auctionRepo.save(auction)
+            //bidRepo.save(existingBid)
+            existingBid
         }else {
             auction.addBid(bid)
-            bidRepo.save(bid)
+            auctionRepo.save(auction)
+            bid // TODO.... how should I get the newly saved bid with the id?
         }
     }
 
@@ -81,7 +84,7 @@ class SubmitBidController(
             var bid = bidRepo.findMyBidByAuctionId(auction!!.id!!)
             if( bid != null ){
                 auction.removeBid(bid)
-                bidRepo.delete(bid)
+                auctionRepo.save(auction)
             }
         }
         return ResponseEntity(HttpStatus.NO_CONTENT)

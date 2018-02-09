@@ -1,7 +1,6 @@
-package com.jahnelgroup.jgbay.core.integration
+package com.jahnelgroup.jgbay.core.rest.integration
 
 import com.jahnelgroup.jgbay.core.search.Searchable
-import org.aspectj.lang.annotation.After
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,22 +14,20 @@ import org.springframework.integration.dsl.PublishSubscribeSpec
 import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 import org.springframework.integration.router.HeaderValueRouter
-import org.springframework.integration.router.PayloadTypeRouter
-import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 
 @Configuration
 class RestEventsIntegrationConfig {
 
     /**
-     * Pub/Sub Channel for RepositoryEvent's
+     * Pub/Sub Channel for RepositoryEvents
      */
     @Bean
     fun repositoryEventsPubSubChannel(): MessageChannel =
             MessageChannels.publishSubscribe<PublishSubscribeSpec>("repositoryEventsPubSubChannel").get()
 
     /**
-     * Listen for the RepositoryEvent's and publish them on a pub/sub channel.
+     * Listen for the RepositoryEvents and publish them on a pub/sub channel.
      */
     @Bean
     fun repositoryEvents(): ApplicationEventListeningMessageProducer {
@@ -41,24 +38,24 @@ class RestEventsIntegrationConfig {
     }
 
     /**
-     * Route RepositoryEvent's to the proper search Channel if they are annotated with Searchable.
+     * Route RepositoryEvents to the proper search Channel if they are annotated with Searchable.
      */
     @Bean
-    fun repoEventRouterFlow(): IntegrationFlow {
+    fun repoEventToSearchRouterFlow(): IntegrationFlow {
         return IntegrationFlows.from("repositoryEventsPubSubChannel")
                 .filter(this::searchRelatedEvent)
                 .filter(this::searchableEntity)
                 .enrichHeaders({it.headerFunction<ApplicationEvent>("payloadType"){it.payload.javaClass.name}})
                 .log()
-                .route(repoEventRouter())
+                .route(repoEventToSearchRouter())
                 .get()
     }
 
     /**
-     * Defines the channel mappings for RepoEvent's to search channels
+     * Defines the channel mappings for RepoEvents to search channels
      */
     @Bean
-    fun repoEventRouter() : HeaderValueRouter{
+    fun repoEventToSearchRouter() : HeaderValueRouter{
         var router = HeaderValueRouter("payloadType")
         router.channelMappings = mapOf(
                 Pair("org.springframework.data.rest.core.event.AfterCreateEvent"  , "searchCreateChannel"),
@@ -70,7 +67,7 @@ class RestEventsIntegrationConfig {
     }
 
     /**
-     * Filters down to Repository events for Entity's annotated with @Searchable
+     * Filters down to Repository events for Entitys annotated with @Searchable
      */
     fun searchableEntity(event: ApplicationEvent): Boolean =
             event.source.javaClass.isAnnotationPresent(Searchable::class.java)
