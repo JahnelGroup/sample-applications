@@ -7,19 +7,20 @@ import com.jahnelgroup.jgbay.core.search.Searchable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.Entity
 import javax.persistence.EntityListeners
+import javax.persistence.FetchType
 import javax.persistence.OneToMany
 
 @Entity
 @EntityListeners(value = AuditingEntityListener::class)
-@Searchable(name = "user", transformRef = "userSearchTransformer")
+@Searchable(index = "users", transformRef = "userSearchTransformer")
 data class User (
 
         @JsonIgnore
-        @OneToMany(mappedBy = "seller")
+        @OneToMany(fetch = FetchType.EAGER, mappedBy = "seller") // TODO should remove this
         var sellingAuctions : Set<Auction>? = null,
 
         @JsonIgnore
-        @OneToMany
+        @OneToMany(fetch = FetchType.EAGER) // TODO should remove this
         var biddingAuctions : Set<Auction> = emptySet(),
 
         var username: String = "",

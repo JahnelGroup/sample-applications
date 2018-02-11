@@ -59,6 +59,12 @@ data class Auction (
     }
 
     /**
+     * Returns the bid owner by the provided User ID
+     */
+    fun getBidByUser(userId: Long) = bids.firstOrNull { it.createdBy == userId }
+
+
+    /**
      * Remove a bid from this Auction
      */
     fun removeBid(bid: Bid): Auction {
