@@ -62,7 +62,7 @@ class RestEventsIntegrationConfig {
                 Pair("org.springframework.data.rest.core.event.AfterSaveEvent"    , "searchUpdateChannel"),
                 Pair("org.springframework.data.rest.core.event.AfterDeleteEvent"  , "searchDeleteChannel")
         )
-        router.setDefaultOutputChannelName("nullChannel")
+        router.setDefaultOutputChannelName("errorChannel")
         return router
     }
 

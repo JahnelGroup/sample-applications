@@ -29,8 +29,6 @@ class SearchbleIntegrationConfig {
     lateinit var SEARCH_SERVICE_URI: String
 
     val PARSER = SpelExpressionParser()
-    //val SEARCH_INDEX_URI = PARSER.parseExpression("#systemEnvironment['service.search.uri'] + '/' + headers.payloadIndex")
-    //val SEARCH_ENTITY_URI = PARSER.parseExpression("#systemEnvironment['service.search.uri'] + '/' + headers.payloadIndex + '/' + headers.payloadId")
     val SEARCH_URI = PARSER.parseExpression("headers.searchUri")
 
     @Autowired lateinit var searchableTransformers: SearchableTransformers
@@ -47,7 +45,7 @@ class SearchbleIntegrationConfig {
     fun domainEvents(): ApplicationEventListeningMessageProducer {
         val producer = ApplicationEventListeningMessageProducer()
         producer.setEventTypes(SearchUpdateEvent::class.java)
-        producer.setOutputChannelName("searchUpdateChannel")
+        producer.setOutputChannelName("searchCreateChannel")
         return producer
     }
 
