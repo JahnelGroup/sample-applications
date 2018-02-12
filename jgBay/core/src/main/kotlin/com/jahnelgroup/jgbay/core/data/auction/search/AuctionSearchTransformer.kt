@@ -1,7 +1,7 @@
 package com.jahnelgroup.jgbay.core.data.auction.search
 
 import com.jahnelgroup.jgbay.core.data.auction.Auction
-import com.jahnelgroup.jgbay.core.search.SearchableTransformer
+import com.jahnelgroup.jgbay.common.search.SearchableTransformer
 import org.springframework.stereotype.Component
 
 @Component("auctionSearchTransformer")

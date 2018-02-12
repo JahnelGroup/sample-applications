@@ -7,12 +7,12 @@ import com.jahnelgroup.jgbay.core.data.auction.event.BidAddedEvent
 import com.jahnelgroup.jgbay.core.data.auction.event.BidRemovedEvent
 import com.jahnelgroup.jgbay.core.data.auction.event.BidUpdatedEvent
 import com.jahnelgroup.jgbay.core.data.user.User
-import com.jahnelgroup.jgbay.core.search.Searchable
+import com.jahnelgroup.jgbay.common.search.Searchable
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import javax.persistence.*
 
 @Entity
-@EntityListeners(value = AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class)
 @Searchable("auctions", transformRef = "auctionSearchTransformer")
 data class Auction (
 

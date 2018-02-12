@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import javax.persistence.*
 
 @Entity
-@EntityListeners(value = AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class)
 data class Bid (
     var amount : BigDecimal = BigDecimal("100.00")
 ) : AbstractEntity(){

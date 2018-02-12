@@ -19,7 +19,7 @@ class AuctionTests : AbstractTest() {
         //
         // TODO: Spring Integration Testing
         //
-        var result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auctions").with(STEVEN_CREDENTIALS)
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/auctions").with(STEVEN_CREDENTIALS)
             .content(objectMapper.writeValueAsBytes(Auction(
                     title = "Intel CPU's",
                     auctionDetails = AuctionDetails(

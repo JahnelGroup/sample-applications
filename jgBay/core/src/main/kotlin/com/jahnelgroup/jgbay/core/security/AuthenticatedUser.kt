@@ -7,7 +7,7 @@ class AuthenticatedUser(
         private var user: com.jahnelgroup.jgbay.core.data.user.User,
         username: String,
         password: String,
-        authorities: Set<out GrantedAuthority>
+        authorities: Set<GrantedAuthority>
 ) : User(username, password, authorities) {
 
     fun getUser(): com.jahnelgroup.jgbay.core.data.user.User = user

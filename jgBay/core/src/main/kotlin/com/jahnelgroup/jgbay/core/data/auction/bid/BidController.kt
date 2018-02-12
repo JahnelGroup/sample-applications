@@ -50,7 +50,7 @@ class BidController(
      *
      * TODO: This doesn't trigger the upsertFlow Integration flow for an Auction...
      */
-    @PostMapping(value = SUBMIT_BID_LINK)
+    @PostMapping(SUBMIT_BID_LINK)
     fun submitBid(@PathVariable("id") auction: Auction?, @RequestBody bid: Bid) : Bid {
         var currentUserId = userContextService.getCurrentUserId()!!
 
@@ -77,7 +77,7 @@ class BidController(
     /**
      * Cancel a Bid
      */
-    @DeleteMapping(value = CANCEL_BID_LINK)
+    @DeleteMapping(CANCEL_BID_LINK)
     fun cancelBId(@PathVariable("id") auction: Auction?) : ResponseEntity<Any> {
         if (auction != null && auction.id != null) {
             var bid = auction.getBidByUser(userContextService.getCurrentUserId()!!)

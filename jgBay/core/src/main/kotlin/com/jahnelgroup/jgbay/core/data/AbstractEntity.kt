@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 import javax.persistence.*
 
 @MappedSuperclass
-@EntityListeners(value = AuditingEntityListener::class)
+@EntityListeners(AuditingEntityListener::class)
 abstract class AbstractEntity : AbstractAggregateRoot(), Identifiable<Long>, Serializable {
 
     companion object {
