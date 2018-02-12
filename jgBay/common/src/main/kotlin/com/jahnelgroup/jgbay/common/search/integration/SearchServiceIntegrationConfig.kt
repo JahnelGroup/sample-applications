@@ -14,12 +14,14 @@ import org.springframework.http.HttpMethod
 import org.springframework.integration.dsl.HeaderEnricherSpec
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
+import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.dsl.http.Http
 import org.springframework.integration.dsl.support.Consumer
 import org.springframework.integration.dsl.support.GenericHandler
 import org.springframework.integration.dsl.support.Transformers
 import org.springframework.integration.transformer.GenericTransformer
 import org.springframework.messaging.Message
+import org.springframework.messaging.MessageChannel
 
 @Configuration
 class SearchServiceIntegrationConfig {
@@ -29,6 +31,10 @@ class SearchServiceIntegrationConfig {
 
     val PARSER = SpelExpressionParser()
     val SEARCH_URI = PARSER.parseExpression("headers.searchUri")
+
+    @Bean fun searchCreateChannel(): MessageChannel = MessageChannels.direct("searchCreateChannel").get()
+    @Bean fun searchUpdateChannel(): MessageChannel = MessageChannels.direct("searchUpdateChannel").get()
+    @Bean fun searchDeleteChannel(): MessageChannel = MessageChannels.direct("searchDeleteChannel").get()
 
     @Autowired
     lateinit var appContext: ApplicationContext
@@ -70,7 +76,7 @@ class SearchServiceIntegrationConfig {
      */
     @Bean
     fun createESFlow(): IntegrationFlow {
-        return IntegrationFlows.from("searchCreateChannel")
+        return IntegrationFlows.from(searchCreateChannel())
                 .filter(this::searchablePayload)
                 .log()
                 .transform(ApplicationEvent::getSource)
@@ -89,7 +95,7 @@ class SearchServiceIntegrationConfig {
      */
     @Bean
     fun updateESFlow(): IntegrationFlow {
-        return IntegrationFlows.from("searchUpdateChannel")
+        return IntegrationFlows.from(searchUpdateChannel())
                 .filter(this::searchablePayload)
                 .log()
                 .transform(ApplicationEvent::getSource)
@@ -108,7 +114,7 @@ class SearchServiceIntegrationConfig {
      */
     @Bean
     fun deleteAuctionESFlow(): IntegrationFlow {
-        return IntegrationFlows.from("searchDeleteChannel")
+        return IntegrationFlows.from(searchDeleteChannel())
                 .filter(this::searchablePayload)
                 .log()
                 .transform(RepositoryEvent::getSource)

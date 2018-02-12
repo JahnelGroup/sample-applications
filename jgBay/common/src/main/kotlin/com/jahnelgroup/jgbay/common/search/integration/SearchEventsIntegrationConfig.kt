@@ -7,11 +7,21 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
+import org.springframework.integration.dsl.PublishSubscribeSpec
+import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 import org.springframework.integration.router.PayloadTypeRouter
+import org.springframework.messaging.MessageChannel
 
 @Configuration
 class SearchEventsIntegrationConfig {
+
+    /**
+     * Pub/Sub Channel for Search Events
+     */
+    @Bean
+    fun repositoryEventsPubSubChannel(): MessageChannel =
+            MessageChannels.publishSubscribe<PublishSubscribeSpec>("searchEventsPubSubChannel").get()
 
     /**
      * Listen for the SearchEvents and publish them on a pub/sub channel.

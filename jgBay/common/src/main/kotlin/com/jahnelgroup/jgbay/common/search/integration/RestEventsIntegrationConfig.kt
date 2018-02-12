@@ -21,6 +21,13 @@ import org.springframework.messaging.MessageChannel
 class RestEventsIntegrationConfig {
 
     /**
+     * Pub/Sub Channel for Rest Events
+     */
+    @Bean
+    fun repositoryEventsPubSubChannel(): MessageChannel =
+        MessageChannels.publishSubscribe<PublishSubscribeSpec>("repositoryEventsPubSubChannel").get()
+
+    /**
      * Listen for the RepositoryEvents and publish them on a pub/sub channel.
      */
     @Bean
