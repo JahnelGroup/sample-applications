@@ -49,6 +49,7 @@ subprojects {
 		compile('org.springframework.integration:spring-integration-event')
 		compile('org.springframework.integration:spring-integration-http')
 		compile('org.springframework.integration:spring-integration-jpa')
+		testCompile('org.springframework.integration:spring-integration-test')
 
 		compile('org.hibernate:hibernate-java8')
 		compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
