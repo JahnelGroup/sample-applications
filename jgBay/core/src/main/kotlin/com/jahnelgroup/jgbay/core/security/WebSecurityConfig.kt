@@ -17,6 +17,7 @@ class WebSecurityConfig() : WebSecurityConfigurerAdapter() {
             .and()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/integration/**").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .csrf().disable()
