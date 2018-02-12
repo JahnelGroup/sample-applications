@@ -31,16 +31,17 @@ class SearchEventsIntegrationConfig {
     @Bean
     fun searchEventToSearchServiceRouterFlow(): IntegrationFlow {
         return IntegrationFlows.from("searchEventsPubSubChannel")
-                .log()
-                .route(object : PayloadTypeRouter() { init {
-                    channelMappings = mapOf(
-                            Pair(SearchCreateEvent::class.java.name, "searchCreateChannel"),
-                            Pair("SearchUpdateEvent", "searchUpdateChannel"),
-                            Pair("SearchDeleteEvent", "searchDeleteChannel"))
+            .log()
+            .route(object : PayloadTypeRouter() { init {
+                setDefaultOutputChannelName("errorChannel")
+                channelMappings = mapOf(
+                    Pair(SearchCreateEvent::class.java.name, "searchCreateChannel"),
+                    Pair(SearchUpdateEvent::class.java.name, "searchUpdateChannel"),
+                    Pair(SearchDeleteEvent::class.java.name, "searchDeleteChannel"))
 
-                    setDefaultOutputChannelName("errorChannel")
-                }})
-                .get()
+
+            }})
+            .get()
     }
 
 }

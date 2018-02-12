@@ -14,17 +14,11 @@ import org.springframework.integration.dsl.PublishSubscribeSpec
 import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 import org.springframework.integration.router.HeaderValueRouter
+import org.springframework.integration.router.PayloadTypeRouter
 import org.springframework.messaging.MessageChannel
 
 @Configuration
 class RestEventsIntegrationConfig {
-
-    /**
-     * Pub/Sub Channel for RepositoryEvents
-     */
-    @Bean
-    fun repositoryEventsPubSubChannel(): MessageChannel =
-            MessageChannels.publishSubscribe<PublishSubscribeSpec>("repositoryEventsPubSubChannel").get()
 
     /**
      * Listen for the RepositoryEvents and publish them on a pub/sub channel.
@@ -43,27 +37,17 @@ class RestEventsIntegrationConfig {
     @Bean
     fun repoEventToSearchRouterFlow(): IntegrationFlow {
         return IntegrationFlows.from("repositoryEventsPubSubChannel")
-                .filter(this::searchRelatedEvent)
                 .filter(this::searchableEntity)
-                .enrichHeaders({it.headerFunction<ApplicationEvent>("payloadType"){it.payload.javaClass.name}})
+                .filter(this::searchRelatedEvent)
                 .log()
-                .route(repoEventToSearchRouter())
+                .route(object : PayloadTypeRouter(){ init {
+                    setDefaultOutputChannelName("errorChannel")
+                    channelMappings = mapOf(
+                        Pair(AfterCreateEvent::class.java.name  , "searchCreateChannel"),
+                        Pair(AfterSaveEvent::class.java.name    , "searchUpdateChannel"),
+                        Pair(AfterDeleteEvent::class.java.name  , "searchDeleteChannel"))
+                }})
                 .get()
-    }
-
-    /**
-     * Defines the channel mappings for RepoEvents to search channels
-     */
-    @Bean
-    fun repoEventToSearchRouter() : HeaderValueRouter{
-        var router = HeaderValueRouter("payloadType")
-        router.channelMappings = mapOf(
-                Pair("org.springframework.data.rest.core.event.AfterCreateEvent"  , "searchCreateChannel"),
-                Pair("org.springframework.data.rest.core.event.AfterSaveEvent"    , "searchUpdateChannel"),
-                Pair("org.springframework.data.rest.core.event.AfterDeleteEvent"  , "searchDeleteChannel")
-        )
-        router.setDefaultOutputChannelName("errorChannel")
-        return router
     }
 
     /**
