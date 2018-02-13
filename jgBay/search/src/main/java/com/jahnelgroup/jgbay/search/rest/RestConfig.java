@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.search.data.rest;
+package com.jahnelgroup.jgbay.search.rest;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
