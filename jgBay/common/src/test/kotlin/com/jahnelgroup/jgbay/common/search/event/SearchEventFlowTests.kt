@@ -1,15 +1,13 @@
 package com.jahnelgroup.jgbay.common.search.event
 
 import com.jahnelgroup.jgbay.common.AbstractTest
-import com.jahnelgroup.jgbay.common.search.integration.RestEventsIntegrationConfig
+import com.jahnelgroup.jgbay.common.search.integration.SearchChannelsIntegrationConfig
 import com.jahnelgroup.jgbay.common.search.integration.SearchEventsIntegrationConfig
-import com.jahnelgroup.jgbay.common.search.integration.SearchServiceIntegrationConfig
 import com.jahnelgroup.jgbay.common.search.integration.event.SearchCreateEvent
 import com.jahnelgroup.jgbay.common.search.integration.event.SearchDeleteEvent
 import com.jahnelgroup.jgbay.common.search.integration.event.SearchUpdateEvent
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -20,7 +18,7 @@ import org.springframework.integration.channel.PublishSubscribeChannel
 import org.springframework.messaging.support.MessageBuilder
 import org.springframework.test.context.ContextConfiguration
 
-@ContextConfiguration(classes = [SearchEventsIntegrationConfig::class, SearchServiceIntegrationConfig::class])
+@ContextConfiguration(classes = [SearchEventsIntegrationConfig::class, SearchChannelsIntegrationConfig::class])
 class SearchEventFlowTests : AbstractTest() {
 
     @Autowired @Qualifier("searchEventsPubSubChannel") lateinit var pubSub: PublishSubscribeChannel

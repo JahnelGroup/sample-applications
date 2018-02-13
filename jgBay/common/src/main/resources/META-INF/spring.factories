@@ -1,5 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.jahnelgroup.jgbay.common.search.integration.RestEventsIntegrationConfig,\
   com.jahnelgroup.jgbay.common.search.integration.SearchEventsIntegrationConfig,\
-  com.jahnelgroup.jgbay.common.search.integration.SearchServiceIntegrationConfig,\
+  com.jahnelgroup.jgbay.common.search.integration.SearchChannelsIntegrationConfig,\
+  com.jahnelgroup.jgbay.common.search.integration.SearchGatewayIntegrationConfig,\
   com.jahnelgroup.jgbay.common.search.integration.visualization.SpringIntegrationVisualizationConfig

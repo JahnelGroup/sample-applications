@@ -25,7 +25,7 @@ class SearchEventsIntegrationConfig {
             MessageChannels.publishSubscribe<PublishSubscribeSpec>("searchEventsPubSubChannel").get()
 
     /**
-     * Listen for the SearchEvents and publish them on a pub/sub channel.
+     * Listen for the Search Events and publish them on a pub/sub channel.
      */
     @Bean
     fun searchEvents(): ApplicationEventListeningMessageProducer {
@@ -37,7 +37,7 @@ class SearchEventsIntegrationConfig {
     }
 
     /**
-     * Route SearchEvents to the proper search channel.
+     * Route Search Events to the proper search channel.
      */
     @Bean
     fun searchEventToSearchServiceRouterFlow(): IntegrationFlow {
@@ -49,8 +49,6 @@ class SearchEventsIntegrationConfig {
                     Pair(SearchCreateEvent::class.java.name, "searchCreateChannel"),
                     Pair(SearchUpdateEvent::class.java.name, "searchUpdateChannel"),
                     Pair(SearchDeleteEvent::class.java.name, "searchDeleteChannel"))
-
-
             }})
             .get()
     }
