@@ -8,14 +8,13 @@ import org.springframework.data.rest.core.event.AfterCreateEvent
 import org.springframework.data.rest.core.event.AfterDeleteEvent
 import org.springframework.data.rest.core.event.AfterSaveEvent
 import org.springframework.data.rest.core.event.RepositoryEvent
+import org.springframework.integration.channel.PublishSubscribeChannel
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.PublishSubscribeSpec
 import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
-import org.springframework.integration.router.HeaderValueRouter
 import org.springframework.integration.router.PayloadTypeRouter
-import org.springframework.messaging.MessageChannel
 
 @Configuration
 class RestEventsIntegrationConfig {
@@ -24,7 +23,7 @@ class RestEventsIntegrationConfig {
      * Pub/Sub Channel for Rest Events
      */
     @Bean
-    fun repositoryEventsPubSubChannel(): MessageChannel =
+    fun repositoryEventsPubSubChannel(): PublishSubscribeChannel =
         MessageChannels.publishSubscribe<PublishSubscribeSpec>("repositoryEventsPubSubChannel").get()
 
     /**
@@ -43,7 +42,7 @@ class RestEventsIntegrationConfig {
      */
     @Bean
     fun repoEventToSearchRouterFlow(): IntegrationFlow {
-        return IntegrationFlows.from("repositoryEventsPubSubChannel")
+        return IntegrationFlows.from(repositoryEventsPubSubChannel())
                 .filter(this::searchableEntity)
                 .filter(this::searchRelatedEvent)
                 .log()

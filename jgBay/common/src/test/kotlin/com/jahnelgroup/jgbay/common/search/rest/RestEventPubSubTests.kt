@@ -1,7 +1,8 @@
-package com.jahnelgroup.jgbay.common.search
+package com.jahnelgroup.jgbay.common.search.rest
 
 import com.jahnelgroup.jgbay.common.AbstractTest
 import com.jahnelgroup.jgbay.common.search.integration.RestEventsIntegrationConfig
+import com.jahnelgroup.jgbay.common.search.integration.SearchServiceIntegrationConfig
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Qualifier
@@ -10,8 +11,8 @@ import org.springframework.data.rest.core.event.BeforeCreateEvent
 import org.springframework.messaging.MessageChannel
 import org.springframework.test.context.ContextConfiguration
 
-@ContextConfiguration(classes = [(RestEventsIntegrationConfig::class)])
-class RestEventTests : AbstractTest() {
+@ContextConfiguration(classes = [RestEventsIntegrationConfig::class])
+class RestEventPubSubTests : AbstractTest() {
 
     @MockBean
     @Qualifier("repositoryEventsPubSubChannel")
