@@ -5,6 +5,7 @@ import com.jahnelgroup.jgbay.common.search.integration.event.SearchDeleteEvent
 import com.jahnelgroup.jgbay.common.search.integration.event.SearchUpdateEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.integration.channel.PublishSubscribeChannel
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.PublishSubscribeSpec
@@ -20,7 +21,7 @@ class SearchEventsIntegrationConfig {
      * Pub/Sub Channel for Search Events
      */
     @Bean
-    fun repositoryEventsPubSubChannel(): MessageChannel =
+    fun searchEventsPubSubChannel(): PublishSubscribeChannel =
             MessageChannels.publishSubscribe<PublishSubscribeSpec>("searchEventsPubSubChannel").get()
 
     /**
@@ -40,7 +41,7 @@ class SearchEventsIntegrationConfig {
      */
     @Bean
     fun searchEventToSearchServiceRouterFlow(): IntegrationFlow {
-        return IntegrationFlows.from("searchEventsPubSubChannel")
+        return IntegrationFlows.from(searchEventsPubSubChannel())
             .log()
             .route(object : PayloadTypeRouter() { init {
                 setDefaultOutputChannelName("errorChannel")

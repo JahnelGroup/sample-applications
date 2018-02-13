@@ -2,34 +2,39 @@ package com.jahnelgroup.jgbay.common.search.rest
 
 import com.jahnelgroup.jgbay.common.AbstractTest
 import com.jahnelgroup.jgbay.common.search.integration.RestEventsIntegrationConfig
-import com.jahnelgroup.jgbay.common.search.integration.SearchServiceIntegrationConfig
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.data.rest.core.event.BeforeCreateEvent
-import org.springframework.messaging.MessageChannel
+import org.springframework.data.rest.core.event.*
+import org.springframework.integration.channel.PublishSubscribeChannel
 import org.springframework.test.context.ContextConfiguration
 
 @ContextConfiguration(classes = [RestEventsIntegrationConfig::class])
 class RestEventPubSubTests : AbstractTest() {
 
     @MockBean
-    @Qualifier("repositoryEventsPubSubChannel")
-    lateinit var pubSub: MessageChannel
+    @Qualifier("repositoryEventsPubSubChannel") lateinit var pubSub: PublishSubscribeChannel
+
+    @Before
+    fun before(){
+        mockChannelAccept(pubSub)
+    }
+
+    // pretend to be any repo event
+    class RepoEvent(any: Any) : RepositoryEvent(any)
 
     @Test
     fun `RepositoryEvent should be published`(){
-        Mockito.`when`(pubSub.send(Mockito.any())).then({true}) // just accept the message
-        appEventPublisher.publishEvent(BeforeCreateEvent("anything"))
-        Mockito.verify(pubSub, Mockito.times(1)).send(Mockito.any())
+        appEventPublisher.publishEvent(RepoEvent({}))
+        verifyChannelCount(Pair(pubSub, 1))
     }
 
     @Test
     fun `non repo events should not be published`(){
-        Mockito.`when`(pubSub.send(Mockito.any())).then({true}) // just accept the message
         appEventPublisher.publishEvent(object{})
-        Mockito.verify(pubSub, Mockito.times(0)).send(Mockito.any())
+        verifyChannelCount(Pair(pubSub, 0))
     }
 
 }
