@@ -2,34 +2,33 @@ package com.jahnelgroup.jgbay.common.search
 
 import com.jahnelgroup.jgbay.common.AbstractTest
 import com.jahnelgroup.jgbay.common.search.integration.RestEventsIntegrationConfig
-import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.mockito.Mockito
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.rest.core.event.BeforeCreateEvent
-import org.springframework.data.rest.core.event.RepositoryEvent
-import org.springframework.integration.channel.QueueChannel
-import org.springframework.integration.support.MessageBuilder
 import org.springframework.messaging.MessageChannel
 import org.springframework.test.context.ContextConfiguration
 
-@Ignore
-@ContextConfiguration(classes = arrayOf(RestEventsIntegrationConfig::class, RestEventTestsConfig::class))
+@ContextConfiguration(classes = [(RestEventsIntegrationConfig::class)])
 class RestEventTests : AbstractTest() {
 
-    @Autowired
-    lateinit var repositoryEventsPubSubChannel: MessageChannel
-
-    @Autowired
-    lateinit var repositoryEventsPubSubChannelTest: QueueChannel
+    @MockBean
+    @Qualifier("repositoryEventsPubSubChannel")
+    lateinit var pubSub: MessageChannel
 
     @Test
-    fun `my test`(){
-        var inMessage = MessageBuilder.withPayload<RepositoryEvent>(BeforeCreateEvent("test")).build()
-        repositoryEventsPubSubChannel.send(inMessage)
+    fun `RepositoryEvent should be published`(){
+        Mockito.`when`(pubSub.send(Mockito.any())).then({true}) // just accept the message
+        appEventPublisher.publishEvent(BeforeCreateEvent("anything"))
+        Mockito.verify(pubSub, Mockito.times(1)).send(Mockito.any())
+    }
 
-        var outMessage = repositoryEventsPubSubChannelTest.receive(0)
-        Assert.assertNotNull(outMessage)
+    @Test
+    fun `non repo events should not be published`(){
+        Mockito.`when`(pubSub.send(Mockito.any())).then({true}) // just accept the message
+        appEventPublisher.publishEvent(object{})
+        Mockito.verify(pubSub, Mockito.times(0)).send(Mockito.any())
     }
 
 }
