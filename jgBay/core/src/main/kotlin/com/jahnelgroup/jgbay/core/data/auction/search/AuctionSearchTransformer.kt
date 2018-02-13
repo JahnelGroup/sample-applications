@@ -12,7 +12,7 @@ class AuctionSearchTransformer : SearchableTransformer<Auction, AuctionSearchTra
                 var id : Long = 0,
                 var status: String = "",
                 var title: String = "",
-                var seller: Long = 0,
+                var sellerId: Long = 0,
                 var numberOfBids: Int = 0,
                 var categories: Set<String> = emptySet()
         )
@@ -24,7 +24,7 @@ class AuctionSearchTransformer : SearchableTransformer<Auction, AuctionSearchTra
                 this.id = from.id!!
                 this.title = from.title
                 this.status = from.status.name
-                this.seller = from.createdBy
+                this.sellerId = from.createdBy
                 this.numberOfBids = from.bids.size
                 this.categories = from.categories.map { it.name }.toSet()
             }
