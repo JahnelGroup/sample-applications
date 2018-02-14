@@ -75,7 +75,7 @@ class SearchGatewayIntegrationConfig {
     fun transformPayload() = GenericTransformer<Message<Any>, Any> {
         var from = it.payload
         var transformer = appContext.getBean(from.javaClass.getAnnotation(Searchable::class.java).transformRef)
-                as SearchableTransformer<*, *>
+                as SearchableTransformer<Any>
         transformer.from(from)
     }
 

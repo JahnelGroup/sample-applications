@@ -1,27 +1,17 @@
 package com.jahnelgroup.jgbay.core.data.user.search
 
-import com.jahnelgroup.jgbay.core.data.auction.Auction
-import com.jahnelgroup.jgbay.core.data.user.User
 import com.jahnelgroup.jgbay.common.search.SearchableTransformer
+import com.jahnelgroup.jgbay.core.data.user.User
 import org.springframework.stereotype.Component
 
 @Component("userSearchTransformer")
-class UserSearchTransformer : SearchableTransformer<Auction, UserSearchTransformer.Companion.SearchableUser> {
+class UserSearchTransformer : SearchableTransformer<User> {
 
-    companion object {
-        data class SearchableUser(
-                var id : Long = 0,
-                var username: String = "",
-                var rating: Short = 0
-        )
-    }
-
-    override fun from(from: Any): SearchableUser =
-            with(from as User){
-                SearchableUser().apply {
-                    this.id = from.id!!
-                    this.username = from.username
-                    this.rating = from.rating
-                }
+    override fun from(from: User): Any =
+            object {
+                var id : Long        = from.id!!
+                var username: String = from.username
+                var rating: Short    = from.rating
             }
+
 }

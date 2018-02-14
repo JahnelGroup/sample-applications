@@ -27,7 +27,7 @@ annotation class Searchable(
 /**
  * Determines if an ApplicationEvent is eligible for Elasticsearch
  */
-inline fun ApplicationEvent.isSearchable(): Boolean {
+fun ApplicationEvent.isSearchable(): Boolean {
     return if(this.source.javaClass.isAnnotationPresent(Searchable::class.java)){
         if(this is RepositoryEvent){
             (this is AfterCreateEvent || this is AfterSaveEvent || this is AfterDeleteEvent)
