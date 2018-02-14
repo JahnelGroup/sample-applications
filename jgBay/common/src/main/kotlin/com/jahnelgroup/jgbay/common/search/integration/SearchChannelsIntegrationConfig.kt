@@ -7,6 +7,9 @@ import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.IntegrationFlows
 import org.springframework.integration.dsl.channel.MessageChannels
 
+/**
+ * Pass through integration channels that enrich headers with their respective searchAction.
+ */
 @Configuration
 class SearchChannelsIntegrationConfig {
 

@@ -29,4 +29,10 @@ abstract class AbstractTest {
         }
     }
 
+    fun verifyZeroChannelCount(vararg channel: MessageChannel){
+        channel.forEach {
+            Mockito.verify(it, Mockito.times(0)).send(Mockito.any())
+        }
+    }
+
 }

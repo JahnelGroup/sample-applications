@@ -1,6 +1,6 @@
 package com.jahnelgroup.jgbay.common.search.integration
 
-import com.jahnelgroup.jgbay.common.search.Searchable
+import com.jahnelgroup.jgbay.common.search.isSearchable
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -16,6 +16,9 @@ import org.springframework.integration.dsl.channel.MessageChannels
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer
 import org.springframework.integration.router.PayloadTypeRouter
 
+/**
+ * Integration flow for repository events with a source that have the @Searchable annotation.
+ */
 @Configuration
 class RestEventsIntegrationConfig {
 
@@ -43,29 +46,16 @@ class RestEventsIntegrationConfig {
     @Bean
     fun repoEventToSearchRouterFlow(): IntegrationFlow {
         return IntegrationFlows.from(repositoryEventsPubSubChannel())
-                .filter(this::searchableEntity)
-                .filter(this::searchRelatedEvent)
+                .filter(ApplicationEvent::isSearchable)
                 .log()
                 .route(object : PayloadTypeRouter(){ init {
                     setDefaultOutputChannelName("errorChannel")
                     channelMappings = mapOf(
-                        Pair(AfterCreateEvent::class.java.name  , "searchCreateChannel"),
-                        Pair(AfterSaveEvent::class.java.name    , "searchUpdateChannel"),
-                        Pair(AfterDeleteEvent::class.java.name  , "searchDeleteChannel"))
+                        AfterCreateEvent::class.java.name  to "searchCreateChannel",
+                        AfterSaveEvent::class.java.name    to "searchUpdateChannel",
+                        AfterDeleteEvent::class.java.name  to "searchDeleteChannel")
                 }})
                 .get()
     }
-
-    /**
-     * Filters down to Repository events for Entitys annotated with @Searchable
-     */
-    fun searchableEntity(event: ApplicationEvent): Boolean =
-            event.source.javaClass.isAnnotationPresent(Searchable::class.java)
-
-    /**
-     * Filters out non-search related Repository Events
-     */
-    fun searchRelatedEvent(event: ApplicationEvent): Boolean =
-            event is AfterCreateEvent || event is AfterSaveEvent || event is AfterDeleteEvent
 
 }

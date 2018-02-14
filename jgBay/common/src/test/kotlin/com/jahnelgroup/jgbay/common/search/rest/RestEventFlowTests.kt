@@ -34,36 +34,42 @@ class RestEventFlowTests : AbstractTest() {
     fun `AfterCreateEvent to searchCreateChannel`(){
         pubSub.send(MessageBuilder.withPayload(AfterCreateEvent(SearchableEntity())).build())
         verifyChannelCount(
-                Pair(searchCreateChannel,1),
-                Pair(searchUpdateChannel,0),
-                Pair(searchDeleteChannel,0))
+                searchCreateChannel to 1,
+                searchUpdateChannel to 0,
+                searchDeleteChannel to 0)
     }
 
     @Test
     fun `AfterSaveEvent to searchUpdateChannel`(){
         pubSub.send(MessageBuilder.withPayload(AfterSaveEvent(SearchableEntity())).build())
         verifyChannelCount(
-                Pair(searchCreateChannel,0),
-                Pair(searchUpdateChannel,1),
-                Pair(searchDeleteChannel,0))
+                searchCreateChannel to 0,
+                searchUpdateChannel to 1,
+                searchDeleteChannel to 0)
     }
 
     @Test
     fun `AfterDeleteEvent to searchDeleteChannel`(){
         pubSub.send(MessageBuilder.withPayload(AfterDeleteEvent(SearchableEntity())).build())
         verifyChannelCount(
-                Pair(searchCreateChannel,0),
-                Pair(searchUpdateChannel,0),
-                Pair(searchDeleteChannel,1))
+                searchCreateChannel to 0,
+                searchUpdateChannel to 0,
+                searchDeleteChannel to 1)
     }
 
     @Test
     fun `All other Repository events to nullChannel`(){
         arrayOf(BeforeCreateEvent({}), BeforeSaveEvent({}), BeforeDeleteEvent({}), AfterLinkSaveEvent({}, null), AfterLinkDeleteEvent({}, null)).forEach {
-            verifyChannelCount(
-                    Pair(searchCreateChannel,0),
-                    Pair(searchUpdateChannel,0),
-                    Pair(searchDeleteChannel,0))
+            pubSub.send(MessageBuilder.withPayload(it).build())
+            verifyZeroChannelCount(searchCreateChannel, searchUpdateChannel, searchDeleteChannel)
+        }
+    }
+
+    @Test
+    fun `Non-Searchable events to nullChannel`(){
+        arrayOf(AfterCreateEvent({}), AfterSaveEvent({}), AfterDeleteEvent({})).forEach {
+            pubSub.send(MessageBuilder.withPayload(it).build())
+            verifyZeroChannelCount(searchCreateChannel, searchUpdateChannel, searchDeleteChannel)
         }
     }
 
