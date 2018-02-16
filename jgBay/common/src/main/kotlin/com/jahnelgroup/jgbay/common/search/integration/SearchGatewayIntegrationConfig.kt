@@ -86,7 +86,7 @@ class SearchGatewayIntegrationConfig {
         var index = it.headers["payloadIndex"]
         var id = it.headers["payloadId"]
         return when(it.headers["searchAction"]){
-            "create"            -> "$URI/$index"
+            "create"            -> "$URI/$index/$id"
             "update", "delete"  -> "$URI/$index/$id"
             else                -> throw OperationNotSupportedException()
         }

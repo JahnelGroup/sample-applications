@@ -11,6 +11,7 @@ import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/api")
 @RestController
 public class IndexController {
 
@@ -36,7 +37,7 @@ public class IndexController {
             @RequestParam("query") String query,
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "250") Integer size,
-            @RequestParam(value = "sortCol",required = false, defaultValue = "id") String sortCol,
+            @RequestParam(value = "sortCol",required = false, defaultValue = "_id") String sortCol,
             @RequestParam(value = "sortDir", required = false, defaultValue = "ASC") String sortDir) {
         return indexService.search(index, query, new PageRequest(page, size, Sort.Direction.fromString(sortDir), sortCol));
     }
