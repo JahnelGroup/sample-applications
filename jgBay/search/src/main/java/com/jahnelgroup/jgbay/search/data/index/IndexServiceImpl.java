@@ -71,7 +71,7 @@ public class IndexServiceImpl implements IndexService {
             final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.query(queryBuilder);
             sourceBuilder.from(pageable.getPageNumber());
-            sourceBuilder.size(pageable.getPageSize() + 1);
+            sourceBuilder.size(pageable.getPageSize());
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
             final SearchRequest searchRequest = new SearchRequest(index);
             searchRequest.types(index);

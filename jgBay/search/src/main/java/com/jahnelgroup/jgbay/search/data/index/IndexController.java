@@ -35,7 +35,7 @@ public class IndexController {
     @PostMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.CREATED)
     public JsonNode index(@RequestBody JsonNode payload, @PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.index(documentId, payload, index);
+        return indexService.index(index, documentId, payload);
     }
 
     @DeleteMapping("/{index}/{documentId}")
@@ -47,7 +47,7 @@ public class IndexController {
     @PutMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public JsonNode update(@RequestBody JsonNode payload, @PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.update(documentId, payload, index);
+        return indexService.update(index, documentId, payload);
     }
 
 }
