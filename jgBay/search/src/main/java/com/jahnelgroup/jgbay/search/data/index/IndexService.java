@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 
 public interface IndexService {
 
-    JsonNode findOne(String documentId, String index);
+    JsonNode findOne(String index, String documentId);
     Page<JsonNode> search(String index, String rsql, Pageable pageable);
-    JsonNode index(String documentId, JsonNode document, String index);
-    JsonNode update(String documentId, JsonNode document, String index);
-    JsonNode delete(String documentId, String index);
+    JsonNode index(String index, String documentId, JsonNode document);
+    JsonNode update(String index, String documentId, JsonNode document);
+    JsonNode delete(String index, String documentId);
 
 }

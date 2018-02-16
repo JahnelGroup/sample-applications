@@ -50,7 +50,7 @@ public class IndexServiceImpl implements IndexService {
     private ObjectMapper objectMapper;
 
     @Override
-    public JsonNode findOne(String documentId, String index) {
+    public JsonNode findOne(String index, String documentId) {
         try {
             final GetRequest request = new GetRequest(index, index, documentId);
             final GetResponse response = restHighLevelClient.get(request);
@@ -89,7 +89,7 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public JsonNode index(String documentId, JsonNode document, String index) {
+    public JsonNode index(String index, String documentId, JsonNode document) {
         try {
             final IndexResponse response = restHighLevelClient.index(
                     new IndexRequest(index, index, documentId)
@@ -101,7 +101,7 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public JsonNode update(String documentId, JsonNode document, String index) {
+    public JsonNode update(String index, String documentId, JsonNode document) {
         try {
             final UpdateResponse response = restHighLevelClient.update(
                     new UpdateRequest(index, index, documentId)
@@ -113,7 +113,7 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public JsonNode delete(String documentId, String index) {
+    public JsonNode delete(String index, String documentId) {
         try {
             final DeleteResponse response = restHighLevelClient.delete(
                     new DeleteRequest(index, index, documentId));
