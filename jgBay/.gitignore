@@ -1,6 +1,5 @@
 ### Elasticsearch ###
 /esdata/
-**/data/
 
 ### Gradle ###
 .gradle
@@ -21,7 +20,6 @@
 *.iws
 *.iml
 *.ipr
-**/out
 
 ### NetBeans ###
 nbproject/private/
