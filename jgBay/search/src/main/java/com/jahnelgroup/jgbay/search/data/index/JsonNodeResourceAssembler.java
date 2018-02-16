@@ -11,7 +11,7 @@ public class JsonNodeResourceAssembler extends IdentifiableResourceAssemblerSupp
 
     @Override
     public ResourceSupport toResource(JsonNodeDocument entity) {
-        return null;
+        return super.createResource(entity);
     }
 
 }
