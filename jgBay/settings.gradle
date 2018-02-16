@@ -2,8 +2,8 @@ rootProject.name = 'jgBay'
 
 include(':common')
 include(':core')
-//include(':search')
+include(':search')
 
 project(':common').projectDir = "$rootDir/common" as File
 project(':core').projectDir = "$rootDir/core" as File
-//project(':search').projectDir = "$rootDir/search" as File
+project(':search').projectDir = "$rootDir/search" as File

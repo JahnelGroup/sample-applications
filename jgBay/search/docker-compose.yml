@@ -4,7 +4,7 @@ services:
   # https://www.docker.elastic.co/
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.1
     restart: always
     network_mode: host
     ports:
@@ -20,7 +20,7 @@ services:
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
   kibana:
-    image: docker.elastic.co/kibana/kibana:5.5.3
+    image: docker.elastic.co/kibana/kibana:6.2.1
     restart: always
     network_mode: host
     ports:

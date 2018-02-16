@@ -1,6 +1,5 @@
 ### Elasticsearch ###
 /esdata/
-/data/
 
 ### Gradle ###
 .gradle
