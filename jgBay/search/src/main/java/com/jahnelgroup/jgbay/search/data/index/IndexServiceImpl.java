@@ -14,11 +14,9 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -26,6 +24,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,14 +52,14 @@ public class IndexServiceImpl implements IndexService {
     private ObjectMapper objectMapper;
 
     @Override
-    public JsonNode findOne(String index, String documentId) {
+    public JsonNodeDocument findOne(String index, String documentId) {
         try {
             final GetRequest request = new GetRequest(index, index, documentId);
             final GetResponse response = restHighLevelClient.get(request);
             if(!response.isExists()) {
                 throw new ResourceNotFoundException("Document not found.");
             }
-            return objectMapper.readTree(response.getSourceAsString());
+            return new JsonNodeDocument(objectMapper.readTree(response.getSourceAsString()), index, documentId);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
@@ -75,6 +74,8 @@ public class IndexServiceImpl implements IndexService {
             sourceBuilder.query(queryBuilder);
             sourceBuilder.from(pageable.getPageNumber());
             sourceBuilder.size(pageable.getPageSize());
+            pageable.getSort().iterator().forEachRemaining(sort ->
+                    sourceBuilder.sort(sort.getProperty(), SortOrder.fromString(sort.getDirection().name())));
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
             final SearchRequest searchRequest = new SearchRequest(index);
             searchRequest.types(index);
@@ -85,19 +86,18 @@ public class IndexServiceImpl implements IndexService {
                     .map(SearchHit::getSourceAsString)
                     .map(this::readTree)
                     .collect(Collectors.toList());
-            return new PageImpl<>(list);
+            return new PageImpl<>(list, pageable, hits.totalHits);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public JsonNode index(String index, String documentId, JsonNode document) {
+    public JsonNodeDocument index(String index, String documentId, JsonNode document) {
         try {
-            final IndexResponse response = restHighLevelClient.index(
-                    new IndexRequest(index, index, documentId)
-                            .source(objectMapper.writeValueAsString(document), XContentType.JSON));
-            return objectMapper.convertValue(response, JsonNode.class);
+            final String jsonString = objectMapper.writeValueAsString(document);
+            restHighLevelClient.index(new IndexRequest(index, index, documentId).source(jsonString, XContentType.JSON));
+            return new JsonNodeDocument(document, index, documentId);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
@@ -120,12 +120,11 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public JsonNode update(String index, String documentId, JsonNode document) {
+    public JsonNodeDocument update(String index, String documentId, JsonNode document) {
         try {
-            final UpdateResponse response = restHighLevelClient.update(
-                    new UpdateRequest(index, index, documentId)
-                            .doc(objectMapper.writeValueAsString(document), XContentType.JSON));
-            return objectMapper.convertValue(response, JsonNode.class);
+            final String jsonString = objectMapper.writeValueAsString(document);
+            restHighLevelClient.update(new UpdateRequest(index, index, documentId).doc(jsonString, XContentType.JSON));
+            return new JsonNodeDocument(document, index, documentId);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }

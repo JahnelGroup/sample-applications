@@ -31,7 +31,7 @@ public class ElasticsearchConfig {
         final Function<String, String[]> portFunction = str -> "https".equals(elasticsearchProperties.getProtocol()) ? new String[]{str, "-1"} : str.split(":");
         return Arrays.stream(elasticsearchProperties.getHosts().split(","))
                 .map(portFunction)
-                .map(hostArgs -> new HttpHost(hostArgs[0], Integer.parseInt(hostArgs[1]), elasticsearchProperties.getProtocol()))
+                .map(hostArgs -> new HttpHost(hostArgs[0], hostArgs.length == 2 ? Integer.parseInt(hostArgs[1]) : -1, elasticsearchProperties.getProtocol()))
                 .collect(Collectors.toList())
                 .toArray(new HttpHost[]{});
     }

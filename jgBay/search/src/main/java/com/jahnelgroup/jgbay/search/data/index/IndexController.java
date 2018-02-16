@@ -1,10 +1,13 @@
 package com.jahnelgroup.jgbay.search.data.index;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +17,16 @@ public class IndexController {
     @Autowired
     private IndexService indexService;
 
+    @Autowired
+    private JsonNodeResourceAssembler jsonNodeResourceAssembler;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @GetMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.OK)
     public JsonNode findOne(@PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.findOne(index, documentId);
+        return toJsonNodeResource(indexService.findOne(index, documentId));
     }
 
     @GetMapping("/{index}")
@@ -35,7 +44,7 @@ public class IndexController {
     @PostMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.CREATED)
     public JsonNode index(@RequestBody JsonNode payload, @PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.index(index, documentId, payload);
+        return toJsonNodeResource(indexService.index(index, documentId, payload));
     }
 
     @PostMapping("/batch/{index}")
@@ -53,13 +62,21 @@ public class IndexController {
     @PutMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public JsonNode update(@RequestBody JsonNode payload, @PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.update(index, documentId, payload);
+        return toJsonNodeResource(indexService.update(index, documentId, payload));
     }
 
     @PutMapping("/batch/{index}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public JsonNode update(@RequestBody JsonNode payload, @PathVariable("index") String index) {
+    public JsonNode bulkUpdate(@RequestBody JsonNode payload, @PathVariable("index") String index) {
         return indexService.batchUpdate(index, payload);
+    }
+
+    private JsonNode toJsonNodeResource(JsonNodeDocument document) {
+        final ResourceSupport resource = jsonNodeResourceAssembler.toResource(document);
+        final ObjectNode resourceNode = objectMapper.convertValue(resource, ObjectNode.class);
+        final ObjectNode docNode = (ObjectNode) document.getDocument();
+        resourceNode.fieldNames().forEachRemaining(field -> docNode.set(field, resourceNode.get(field)));
+        return docNode;
     }
 
 }
