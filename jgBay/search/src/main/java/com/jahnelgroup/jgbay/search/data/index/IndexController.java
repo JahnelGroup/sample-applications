@@ -14,21 +14,21 @@ public class IndexController {
     @Autowired
     private IndexService indexService;
 
-    @GetMapping
+    @GetMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.OK)
     public JsonNode findOne(@PathVariable("index") String index, @PathVariable("documentId") String documentId) {
         return indexService.findOne(documentId, index);
     }
 
-    @GetMapping
+    @GetMapping("/{index}")
     @ResponseStatus(HttpStatus.OK)
     public Page<JsonNode> search(
             @PathVariable("index") String index,
             @RequestParam("query") String query,
             @RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
             @RequestParam(value = "size", required = false, defaultValue = "250") Integer size,
-            @RequestParam(value = "query",required = false, defaultValue = "id") String sortCol,
-            @RequestParam(value = "query", required = false, defaultValue = "ASC") String sortDir) {
+            @RequestParam(value = "sortCol",required = false, defaultValue = "id") String sortCol,
+            @RequestParam(value = "sortDir", required = false, defaultValue = "ASC") String sortDir) {
         return indexService.search(index, query, new PageRequest(page, size, Sort.Direction.fromString(sortDir), sortCol));
     }
 

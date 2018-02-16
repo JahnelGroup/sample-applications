@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+jg:
+  elasticsearch:
+    client:
+      hosts: host1,host2
+      protocol: http
+
+logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
