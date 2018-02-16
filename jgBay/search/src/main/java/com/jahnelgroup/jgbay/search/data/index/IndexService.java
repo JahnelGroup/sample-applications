@@ -9,7 +9,9 @@ public interface IndexService {
     JsonNode findOne(String index, String documentId);
     Page<JsonNode> search(String index, String rsql, Pageable pageable);
     JsonNode index(String index, String documentId, JsonNode document);
+    JsonNode batchIndex(String index, JsonNode document);
     JsonNode update(String index, String documentId, JsonNode document);
+    JsonNode batchUpdate(String index, JsonNode document);
     JsonNode delete(String index, String documentId);
 
 }

@@ -28,7 +28,7 @@ public class ElasticsearchConfig {
     }
 
     public HttpHost[] buildHosts(ElasticsearchProperties elasticsearchProperties) {
-        final Function<String, String[]> portFunction = str -> "https".equals(elasticsearchProperties.getProtocol()) ? str.split(":") : new String[]{str, "-1"};
+        final Function<String, String[]> portFunction = str -> "https".equals(elasticsearchProperties.getProtocol()) ? new String[]{str, "-1"} : str.split(":");
         return Arrays.stream(elasticsearchProperties.getHosts().split(","))
                 .map(portFunction)
                 .map(hostArgs -> new HttpHost(hostArgs[0], Integer.parseInt(hostArgs[1]), elasticsearchProperties.getProtocol()))

@@ -2,10 +2,13 @@ package com.jahnelgroup.jgbay.search.data.index;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.jahnelgroup.jgbay.search.rsql.CustomRSQLOperators;
 import com.jahnelgroup.jgbay.search.rsql.es.QueryBuilderRsqlVisitor;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -101,11 +104,43 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
+    public JsonNode batchIndex(String index, JsonNode batch) {
+        try {
+            final BulkRequest bulkRequest = new BulkRequest();
+            final ArrayNode documents = (ArrayNode) batch.get("documents");
+            for(JsonNode document : documents) {
+                   bulkRequest.add(new IndexRequest(index, index, document.get("documentId").asText())
+                           .source(objectMapper.writeValueAsString(document.get("document")), XContentType.JSON));
+            }
+            final BulkResponse response = restHighLevelClient.bulk(bulkRequest);
+            return objectMapper.convertValue(response, JsonNode.class);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public JsonNode update(String index, String documentId, JsonNode document) {
         try {
             final UpdateResponse response = restHighLevelClient.update(
                     new UpdateRequest(index, index, documentId)
                             .doc(objectMapper.writeValueAsString(document), XContentType.JSON));
+            return objectMapper.convertValue(response, JsonNode.class);
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public JsonNode batchUpdate(String index, JsonNode batch) {
+        try {
+            final BulkRequest bulkRequest = new BulkRequest();
+            final ArrayNode documents = (ArrayNode) batch.get("documents");
+            for(JsonNode document : documents) {
+                bulkRequest.add(new UpdateRequest(index, index, document.get("documentId").asText())
+                        .doc(objectMapper.writeValueAsString(document.get("document")), XContentType.JSON));
+            }
+            final BulkResponse response = restHighLevelClient.bulk(bulkRequest);
             return objectMapper.convertValue(response, JsonNode.class);
         } catch(IOException e) {
             throw new RuntimeException(e);

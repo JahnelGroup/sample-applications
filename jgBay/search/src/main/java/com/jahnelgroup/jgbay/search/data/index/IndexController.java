@@ -17,7 +17,7 @@ public class IndexController {
     @GetMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.OK)
     public JsonNode findOne(@PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.findOne(documentId, index);
+        return indexService.findOne(index, documentId);
     }
 
     @GetMapping("/{index}")
@@ -38,16 +38,28 @@ public class IndexController {
         return indexService.index(index, documentId, payload);
     }
 
+    @PostMapping("/batch/{index}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonNode bulkIndex(@RequestBody JsonNode payload, @PathVariable("index") String index) {
+        return indexService.batchIndex(index, payload);
+    }
+
     @DeleteMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public JsonNode delete(@PathVariable("index") String index, @PathVariable("documentId") String documentId) {
-        return indexService.delete(documentId, index);
+        return indexService.delete(index, documentId);
     }
 
     @PutMapping("/{index}/{documentId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public JsonNode update(@RequestBody JsonNode payload, @PathVariable("index") String index, @PathVariable("documentId") String documentId) {
         return indexService.update(index, documentId, payload);
+    }
+
+    @PutMapping("/batch/{index}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public JsonNode update(@RequestBody JsonNode payload, @PathVariable("index") String index) {
+        return indexService.batchUpdate(index, payload);
     }
 
 }
