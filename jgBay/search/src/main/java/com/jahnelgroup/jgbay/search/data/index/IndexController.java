@@ -39,6 +39,13 @@ public class IndexController {
         return indexService.createIndex(index, payload);
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public JsonNode createIndexImplicit(@RequestBody JsonNode payload) {
+        final String index = payload.get("mappings").fieldNames().next();
+        return indexService.createIndex(index, payload);
+    }
+
     @DeleteMapping("/{index}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public JsonNode delete(@PathVariable("index") String index) {
