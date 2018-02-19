@@ -1,4 +1,5 @@
 server:
+  context-path: /api
   port: 8081
 
 security:

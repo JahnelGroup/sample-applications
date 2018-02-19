@@ -2,42 +2,24 @@ package com.jahnelgroup.jgbay.search.data.index;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.jahnelgroup.jgbay.search.rsql.CustomRSQLOperators;
-import com.jahnelgroup.jgbay.search.rsql.es.QueryBuilderRsqlVisitor;
-import cz.jirutka.rsql.parser.RSQLParser;
-import cz.jirutka.rsql.parser.ast.Node;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
+import com.jahnelgroup.jgbay.search.elasticsearch.ElasticsearchProperties;
+import org.apache.http.HttpHost;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class IndexServiceImpl implements IndexService {
@@ -51,68 +33,18 @@ public class IndexServiceImpl implements IndexService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ElasticsearchProperties elasticsearchProperties;
+
     @Override
-    public JsonNodeDocument findOne(String index, String documentId) {
+    public JsonNode createIndex(String index, JsonNode indexMapping) {
         try {
-            final GetRequest request = new GetRequest(index, index, documentId);
-            final GetResponse response = restHighLevelClient.get(request);
-            if(!response.isExists()) {
-                throw new ResourceNotFoundException("Document not found.");
+            final CreateIndexRequest request = new CreateIndexRequest(index);
+            if(indexMapping.has("settings")) {
+                request.settings(objectMapper.writeValueAsString(indexMapping.get("settings")), XContentType.JSON);
             }
-            return new JsonNodeDocument(objectMapper.readTree(response.getSourceAsString()), index, documentId);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public Page<JsonNode> search(String index, String rsqlString, Pageable pageable) {
-        try {
-            final Node rootNode = new RSQLParser(CustomRSQLOperators.customOperators()).parse(rsqlString);
-            final QueryBuilder queryBuilder = rootNode.accept(new QueryBuilderRsqlVisitor());
-            final SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-            sourceBuilder.query(queryBuilder);
-            sourceBuilder.from(pageable.getPageNumber());
-            sourceBuilder.size(pageable.getPageSize());
-            pageable.getSort().iterator().forEachRemaining(sort ->
-                    sourceBuilder.sort(sort.getProperty(), SortOrder.fromString(sort.getDirection().name())));
-            sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
-            final SearchRequest searchRequest = new SearchRequest(index);
-            searchRequest.types(index);
-            searchRequest.source(sourceBuilder);
-            final SearchResponse searchResponse = restHighLevelClient.search(searchRequest);
-            final SearchHits hits = searchResponse.getHits();
-            final List<JsonNode> list = Arrays.stream(hits.getHits())
-                    .map(SearchHit::getSourceAsString)
-                    .map(this::readTree)
-                    .collect(Collectors.toList());
-            return new PageImpl<>(list, pageable, hits.totalHits);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public JsonNodeDocument index(String index, String documentId, JsonNode document) {
-        try {
-            final String jsonString = objectMapper.writeValueAsString(document);
-            restHighLevelClient.index(new IndexRequest(index, index, documentId).source(jsonString, XContentType.JSON));
-            return new JsonNodeDocument(document, index, documentId);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public JsonNode batchIndex(String index, JsonNode batch) {
-        try {
-            final BulkRequest bulkRequest = new BulkRequest();
-            final ArrayNode documents = (ArrayNode) batch.get("documents");
-            for(JsonNode document : documents) {
-                   bulkRequest.add(new IndexRequest(index, index, document.get("documentId").asText())
-                           .source(objectMapper.writeValueAsString(document.get("document")), XContentType.JSON));
-            }
-            final BulkResponse response = restHighLevelClient.bulk(bulkRequest);
+            request.mapping(index, objectMapper.writeValueAsString(indexMapping.get("mappings")), XContentType.JSON);
+            final CreateIndexResponse response = restHighLevelClient.indices().create(request);
             return objectMapper.convertValue(response, JsonNode.class);
         } catch(IOException e) {
             throw new RuntimeException(e);
@@ -120,37 +52,51 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public JsonNodeDocument update(String index, String documentId, JsonNode document) {
-        try {
-            final String jsonString = objectMapper.writeValueAsString(document);
-            restHighLevelClient.update(new UpdateRequest(index, index, documentId).doc(jsonString, XContentType.JSON));
-            return new JsonNodeDocument(document, index, documentId);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public JsonNode batchUpdate(String index, JsonNode batch) {
-        try {
-            final BulkRequest bulkRequest = new BulkRequest();
-            final ArrayNode documents = (ArrayNode) batch.get("documents");
-            for(JsonNode document : documents) {
-                bulkRequest.add(new UpdateRequest(index, index, document.get("documentId").asText())
-                        .doc(objectMapper.writeValueAsString(document.get("document")), XContentType.JSON));
+    public JsonNodeIndex findOne(String index) {
+        Exception lastException = null;
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        for(HttpHost host : elasticsearchProperties.buildHosts()) {
+            try {
+                return new JsonNodeIndex(restTemplate.exchange(
+                            host.toURI() + "/" + index,
+                            HttpMethod.GET,
+                            entity,
+                            JsonNode.class)
+                        .getBody(), index);
+            } catch(Exception e) {
+                lastException = e;
             }
-            final BulkResponse response = restHighLevelClient.bulk(bulkRequest);
-            return objectMapper.convertValue(response, JsonNode.class);
-        } catch(IOException e) {
-            throw new RuntimeException(e);
         }
+        throw new RuntimeException(lastException);
     }
 
     @Override
-    public JsonNode delete(String index, String documentId) {
+    public JsonNode list() {
+        Exception lastException = null;
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        final HttpEntity<String> entity = new HttpEntity<>(headers);
+        for(HttpHost host : elasticsearchProperties.buildHosts()) {
+            try {
+                return restTemplate.exchange(
+                            host.toURI() + "/_cat/indices",
+                            HttpMethod.GET,
+                            entity,
+                            JsonNode.class)
+                        .getBody();
+            } catch(Exception e) {
+                lastException = e;
+            }
+        }
+        throw new RuntimeException(lastException);
+    }
+
+    @Override
+    public JsonNode delete(String index) {
         try {
-            final DeleteResponse response = restHighLevelClient.delete(
-                    new DeleteRequest(index, index, documentId));
+            final DeleteIndexResponse response = restHighLevelClient.indices().delete(new DeleteIndexRequest(index));
             return objectMapper.convertValue(response, JsonNode.class);
         } catch(IOException e) {
             throw new RuntimeException(e);

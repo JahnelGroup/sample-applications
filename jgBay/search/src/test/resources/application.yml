@@ -1,3 +1,6 @@
+server:
+  context-path: /api
+
 jg:
   elasticsearch:
     client:

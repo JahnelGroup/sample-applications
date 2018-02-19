@@ -5,14 +5,14 @@ import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JsonNodeResourceAssembler extends IdentifiableResourceAssemblerSupport<JsonNodeDocument, ResourceSupport> {
+public class JsonNodeIndexResourceAssembler extends IdentifiableResourceAssemblerSupport<JsonNodeIndex, ResourceSupport> {
 
-    public JsonNodeResourceAssembler() {
+    public JsonNodeIndexResourceAssembler() {
         super(IndexController.class, ResourceSupport.class);
     }
 
     @Override
-    public ResourceSupport toResource(JsonNodeDocument entity) {
+    public ResourceSupport toResource(JsonNodeIndex entity) {
         return super.createResource(entity);
     }
 
