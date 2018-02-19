@@ -7,14 +7,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.*;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -41,19 +41,20 @@ public class QueryBuilderRsqlParser extends AbstractRsqlParser<QueryBuilder> {
 
     public QueryBuilder parseComparisonNode(ComparisonNode node) {
         final RsqlSearchOperation operation = RsqlSearchOperation.getSimpleOperator(node.getOperator());
+        final String selector = node.getSelector().replaceAll("_", "");
         String argument = node.getArguments().get(0);
         if(operation != null) {
             switch(operation) {
-                case EQUAL: return wrapInNestedIfNecessary(node.getSelector(), getEqualsQueryBuilder(node.getSelector(), argument));
-                case NOT_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new BoolQueryBuilder().mustNot(new MatchQueryBuilder(node.getSelector(), argument)));
-                case IN: return wrapInNestedIfNecessary(node.getSelector(), getInQueryBuilder(node.getSelector(), node.getArguments()));
-                case NOT_IN: return wrapInNestedIfNecessary(node.getSelector(), new BoolQueryBuilder().mustNot(getInQueryBuilder(node.getSelector(), node.getArguments())));
-                case IS_NULL: return wrapInNestedIfNecessary(node.getSelector(), getNullQueryBuilder(node.getSelector(), argument));
-                case GREATER_THAN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(node.getSelector()).gt(argument));
-                case GREATER_THAN_OR_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(node.getSelector()).gte(argument));
-                case LESS_THAN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(node.getSelector()).lt(argument));
-                case LESS_THAN_OR_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(node.getSelector()).lte(argument));
-                case BETWEEN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(node.getSelector()).from(argument)
+                case EQUAL: return wrapInNestedIfNecessary(node.getSelector(), getEqualsQueryBuilder(selector, argument));
+                case NOT_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new BoolQueryBuilder().mustNot(new MatchQueryBuilder(selector, argument)));
+                case IN: return wrapInNestedIfNecessary(node.getSelector(), getInQueryBuilder(selector, node.getArguments()));
+                case NOT_IN: return wrapInNestedIfNecessary(node.getSelector(), new BoolQueryBuilder().mustNot(getInQueryBuilder(selector, node.getArguments())));
+                case IS_NULL: return wrapInNestedIfNecessary(node.getSelector(), getNullQueryBuilder(selector, argument));
+                case GREATER_THAN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(selector).gt(argument));
+                case GREATER_THAN_OR_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(selector).gte(argument));
+                case LESS_THAN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(selector).lt(argument));
+                case LESS_THAN_OR_EQUAL: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(selector).lte(argument));
+                case BETWEEN: return wrapInNestedIfNecessary(node.getSelector(), new RangeQueryBuilder(selector).from(argument)
                         .includeLower(true)
                         .to(node.getArguments().get(1))
                         .includeUpper(true));
@@ -63,9 +64,26 @@ public class QueryBuilderRsqlParser extends AbstractRsqlParser<QueryBuilder> {
     }
 
     private QueryBuilder wrapInNestedIfNecessary(String selector, QueryBuilder nested) {
-        final String[] split = selector.split("\\.");
-        if(split.length > 1) {
-            return new NestedQueryBuilder(split[0], nested, ScoreMode.None);
+        final Integer nestedCount = StringUtils.countOccurrencesOf(selector, "_");
+        if(nestedCount > 0) {
+            final String[] propSplit = selector.split("\\.");
+            final StringBuilder builder = new StringBuilder();
+            final List<String> nestedPaths = new LinkedList<>();
+            IntStream.range(0, propSplit.length - 1).forEach(i -> {
+                    if(propSplit[i].startsWith("_")) {
+                        builder.append(propSplit[i].substring(1));
+                        nestedPaths.add(builder.toString());
+                    } else {
+                        builder.append(propSplit[i]);
+                    }
+                    builder.append(".");
+            });
+            Collections.reverse(nestedPaths);
+            QueryBuilder inner = nested;
+            for(String path : nestedPaths) {
+                inner = new NestedQueryBuilder(path, inner, ScoreMode.None);
+            }
+            return inner;
         }
         return nested;
     }
