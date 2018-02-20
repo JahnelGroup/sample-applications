@@ -1,4 +1,4 @@
-package com.jahnelgroup.jgbay.search.data.index;
+package com.jahnelgroup.jgbay.search.data.document;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;

@@ -1,6 +1,7 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.0.RC1'
+		elasticsearchVersion = '6.2.0'
 	}
 	repositories {
 		mavenCentral()
@@ -36,9 +37,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	compile('org.projectlombok:lombok:1.16.20')
 	compile('cz.jirutka.rsql:rsql-parser:2.1.0')
-    compile('org.elasticsearch.client:elasticsearch-rest-client:6.2.0')
-    compile('org.elasticsearch.client:elasticsearch-rest-high-level-client:6.2.0')
-    compile('org.elasticsearch:elasticsearch:6.2.0')
+    compile("org.elasticsearch.client:elasticsearch-rest-client:${elasticsearchVersion}")
+    compile("org.elasticsearch.client:elasticsearch-rest-high-level-client:${elasticsearchVersion}")
+    compile("org.elasticsearch:elasticsearch:${elasticsearchVersion}")
 	testCompile('com.h2database:h2')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.codehaus.groovy:groovy-all:2.4.13')

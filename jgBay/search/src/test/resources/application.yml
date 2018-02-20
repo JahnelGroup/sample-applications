@@ -1,7 +1,13 @@
+server:
+  context-path: /api
+
 jg:
   elasticsearch:
     client:
       hosts: host1
       protocol: http
+
+security:
+  ignored: /**
 
 logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
